@@ -1,2 +1,207 @@
-# -Artificial-Geek-
-Artificial Geek is a coder's game.You will play a digital life.In this fictional virtual world,you can backup youself, steal the server's computing power or fight other digital lives!The game can be played anywhere, even in the Windows command prompt or the Linux terminal!I can guarantee this is the most fun game you've ever played on a console!
+# AG命令 - 网络客户端-服务器时间同步工具
+
+## 功能介绍
+
+AG是一个跨平台的网络时间同步工具，支持以下功能：
+
+- **服务器模式**：创建TCP服务器，监听指定端口，每秒向客户端发送一次当前系统时间
+- **客户端模式**：连接到TCP服务器，持续接收并显示服务器发送的时间信息
+- **交互式选择**：支持通过参数或交互式选择指定具体操作
+- **跨平台支持**：可在Linux终端和Windows PowerShell环境中正常运行
+
+## 命令配置
+
+### 方法一：PowerShell模块方式（推荐）
+
+1. **打开PowerShell配置文件**
+   ```powershell
+   notepad $PROFILE
+   ```
+
+2. **添加模块导入代码**
+   在配置文件末尾添加以下代码：
+   ```powershell
+   # 导入AG命令模块
+   Import-Module "f:\GolangWorkSpace\Snake\AG\AGModule.psm1"
+   ```
+
+3. **保存并关闭配置文件**
+
+4. **重新加载PowerShell配置**
+   ```powershell
+   . $PROFILE
+   ```
+
+### 方法二：环境变量方式（需要管理员权限）
+
+1. **以管理员身份运行PowerShell**
+
+2. **添加AG命令目录到系统环境变量**
+   ```powershell
+   [Environment]::SetEnvironmentVariable('Path', $env:Path + ';f:\GolangWorkSpace\Snake\AG', 'Machine')
+   ```
+
+3. **关闭并重新打开PowerShell**
+
+## 使用方法
+
+### 命令行参数方式
+
+**服务器模式**：
+```powershell
+# 使用默认端口8080
+AG -Server
+
+# 指定端口
+AG -Server -Port 9090
+```
+
+**客户端模式**：
+```powershell
+# 连接到本地服务器，使用默认端口8080
+AG -Client
+
+# 指定服务器地址和端口
+AG -Client -Address 192.168.1.100 -Port 8080
+```
+
+### 交互式方式
+
+```powershell
+# 启动交互式模式
+AG
+```
+
+然后按照提示选择操作模式：
+```
+========================================
+      AG - 网络时间同步工具
+========================================
+请选择操作模式：
+1. 启动服务器模式
+2. 启动客户端模式
+3. 退出
+
+请输入选择 (1-3):
+```
+
+## 命令帮助
+
+查看完整的命令帮助信息：
+```powershell
+Get-Help AG
+```
+
+查看详细帮助，包括使用示例：
+```powershell
+Get-Help AG -Detailed
+```
+
+## 技术细节
+
+### 网络通信
+
+- 使用TCP协议确保数据传输的稳定性和实时性
+- 支持并发处理多个客户端连接
+- 自动处理网络异常和连接中断情况
+
+### 时间格式
+
+- 服务器发送的时间信息采用RFC3339标准格式（如：2025-12-07T15:09:03+08:00）
+- 确保客户端能正确解析和显示时间信息
+
+### 持久化配置
+
+- PowerShell模块方式配置后，系统重启后仍可正常使用
+- 环境变量方式配置后，系统重启后仍可正常使用
+
+## 故障排除
+
+1. **命令不可用**
+   - 检查PowerShell配置文件是否正确导入了模块
+   - 确保ChosEngine.exe存在于指定路径
+
+2. **连接失败**
+   - 检查服务器是否已启动并监听正确的端口
+   - 检查网络连接是否正常
+   - 确保防火墙未阻止连接
+
+3. **权限问题**
+   - 如果使用环境变量方式配置，确保以管理员身份运行PowerShell
+   - 如果使用模块方式配置，确保用户对配置文件有写入权限
+
+## 示例使用流程
+
+1. **启动服务器**
+   ```powershell
+   AG -Server -Port 8080
+   ```
+   输出：
+   ```
+   以服务器模式启动，监听端口: 8080
+   服务器已启动，正在监听端口 8080
+   等待客户端连接...
+   ```
+
+2. **启动客户端（在另一个PowerShell窗口）**
+   ```powershell
+   AG -Client -Address localhost -Port 8080
+   ```
+   输出：
+   ```
+   以客户端模式启动，连接到: localhost:8080
+   已成功连接到服务器 localhost:8080
+   正在接收时间信息... (按Ctrl+C中断)
+   2025-12-07T15:09:03+08:00
+   2025-12-07T15:09:04+08:00
+   2025-12-07T15:09:05+08:00
+   ...
+   ```
+
+3. **使用交互式模式**
+   ```powershell
+   AG
+   ```
+   输出：
+   ```
+   ========================================
+         AG - 网络时间同步工具
+   ========================================
+   请选择操作模式：
+   1. 启动服务器模式
+   2. 启动客户端模式
+   3. 退出
+
+   请输入选择 (1-3): 1
+   请输入服务器监听端口 (默认: 8080): 9090
+   以服务器模式启动，监听端口: 9090
+   服务器已启动，正在监听端口 9090
+   等待客户端连接...
+   ```
+
+## 项目结构
+
+```
+AG/
+├── ChosEngine.go      # Go语言源代码
+├── ChosEngine.exe     # 编译后的可执行文件
+├── AG.ps1             # PowerShell脚本入口
+├── AG.cmd             # Windows命令行入口
+├── AGModule.psm1      # PowerShell模块文件
+├── README.md          # 文档
+└── build/             # 构建目录
+```
+
+## 编译源代码
+
+如果需要重新编译源代码，可以使用以下命令：
+
+```powershell
+go build ChosEngine.go
+```
+
+## 系统要求
+
+- Go 1.16+（如果需要重新编译）
+- PowerShell 5.0+（Windows环境）
+- 支持TCP/IP的网络环境
